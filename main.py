@@ -5,8 +5,7 @@ import sys
 import telegram
 
 
-if __name__ == '__main__':
-  chat_token = sys.argv[1]
+chat_token = "5638730978:AAErxfMUsSu37fKHFHWMmpmbuig94t1qWQo"
   
 bot = telegram.Bot(token = chat_token) 
 
