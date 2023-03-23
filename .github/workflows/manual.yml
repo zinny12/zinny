@@ -5,8 +5,7 @@ name: 'semi_news'
 
 on:
   schedule:
-    # cron: "0 * * * *"
-    - cron: "* * * * *"
+    - cron: "0 * * * *"
 
 jobs:
   run:
