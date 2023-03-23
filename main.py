@@ -22,8 +22,9 @@ for n in range(1,41,10) :
         date = i.select_one('span.info').text.strip()
         link = i.select_one('a.news_tit').get('href')
         text = title +"" + link
-        bot.sendMessage(chat_id = Jinny_id, text=text)
-
+        #bot.sendMessage(chat_id = Jinny_id, text=text)
+        bot.sendMessage(chat_id = Jinny_id, text= "3")
+'''
 num = 0
 for n in range(1,41,10) : 
     response = requests.get('https://search.naver.com/search.naver?where=news&sm=tab_opt&sort=1&pd=7&ds=&query='+"삼성전자"+'&start='+str(n))
@@ -93,6 +94,6 @@ for n in range(1,41,10) :
         link = i.select_one('a.news_tit').get('href')
         text = title +"" + link
         bot.sendMessage(chat_id = Jinny_id, text=text)
-
+'''
 
       
