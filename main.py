@@ -6,6 +6,7 @@ import telegram
 
 
 chat_token = "5638730978:AAErxfMUsSu37fKHFHWMmpmbuig94t1qWQo"
+Jinny_id = "5711468830"
   
 bot = telegram.Bot(token = chat_token) 
 
@@ -21,7 +22,7 @@ for n in range(1,41,10) :
         date = i.select_one('span.info').text.strip()
         link = i.select_one('a.news_tit').get('href')
         text = title +"" + link
-        bot.sendMessage(chat_id = 5711468830, text=text)
+        bot.sendMessage(chat_id = Jinny_id, text=text)
 
 num = 0
 for n in range(1,41,10) : 
@@ -35,7 +36,7 @@ for n in range(1,41,10) :
         date = i.select_one('span.info').text.strip()
         link = i.select_one('a.news_tit').get('href')
         text = title +"" + link
-        bot.sendMessage(chat_id = 5711468830, text=text)
+        bot.sendMessage(chat_id = Jinny_id, text=text)
         
 num = 0
 for n in range(1,41,10) : 
@@ -49,7 +50,7 @@ for n in range(1,41,10) :
         date = i.select_one('span.info').text.strip()
         link = i.select_one('a.news_tit').get('href')
         text = title +"" + link
-        bot.sendMessage(chat_id = 5711468830, text=text)
+        bot.sendMessage(chat_id = Jinny_id, text=text)
 
 num = 0
 for n in range(1,41,10) : 
@@ -63,7 +64,7 @@ for n in range(1,41,10) :
         date = i.select_one('span.info').text.strip()
         link = i.select_one('a.news_tit').get('href')
         text = title +"" + link
-        bot.sendMessage(chat_id = 5711468830, text=text)
+        bot.sendMessage(chat_id = Jinny_id, text=text)
         
 num = 0
 for n in range(1,41,10) : 
@@ -77,7 +78,7 @@ for n in range(1,41,10) :
         date = i.select_one('span.info').text.strip()
         link = i.select_one('a.news_tit').get('href')
         text = title +"" + link
-        bot.sendMessage(chat_id = 5711468830, text=text)
+        bot.sendMessage(chat_id = Jinny_id, text=text)
         
 num = 0
 for n in range(1,41,10) :  
@@ -91,7 +92,7 @@ for n in range(1,41,10) :
         date = i.select_one('span.info').text.strip()
         link = i.select_one('a.news_tit').get('href')
         text = title +"" + link
-        bot.sendMessage(chat_id = 5711468830, text=text)
+        bot.sendMessage(chat_id = Jinny_id, text=text)
 
 
       
