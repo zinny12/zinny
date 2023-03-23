@@ -21,7 +21,7 @@ for n in range(1,41,10) :
         title = i.select_one('div.news_area > a').text.strip()
         date = i.select_one('span.info').text.strip()
         link = i.select_one('a.news_tit').get('href')
-        text = title +"" + link
+        text = title +"\n" + link
         #bot.sendMessage(chat_id = Jinny_id, text=text)
         response = requests.post('https://api.telegram.org/bot5638730978:AAErxfMUsSu37fKHFHWMmpmbuig94t1qWQo/sendmessage?chat_id=5711468830&text='+text)
         
