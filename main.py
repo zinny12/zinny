@@ -4,16 +4,12 @@ import openpyxl
 import pprint
 import sys
 import telegram
-import ccxt
+
 
 if __name__ == '__main__':
   chat_token = sys.argv[1]
   
 bot = telegram.Bot(token = chat_token) 
-
-wb = openpyxl.Workbook()
-sheet = wb.active
-sheet.append(['순번','언론사','제목','날짜','링크'])
 
 num = 0
 for n in range(1,41,10) : 
