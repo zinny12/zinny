@@ -28,4 +28,4 @@ jobs:
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
     - name: run
       run: |
-        python main.py  ${{ 5638730978:AAErxfMUsSu37fKHFHWMmpmbuig94t1qWQo }}
+        python main.py
