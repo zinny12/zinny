@@ -4,13 +4,17 @@ import pprint
 import sys
 import telegram
 
+num = 0
+summary = ""
 
 chat_token = "5638730978:AAErxfMUsSu37fKHFHWMmpmbuig94t1qWQo"
 Jinny_id = "5711468830"
   
 bot = telegram.Bot(token = chat_token) 
 
-num = 0
+Materials = ['SK머티리얼즈', '한솔케미칼', '솔브레인', '동진쎄미켐', '이엔에프테크놀로지', '덕산테코피아', '백광산업', '경인양행', '디엔에프', '오션브릿지', '와이씨켐', '지오엘리먼트', '엘티씨', '코미코', '후성', '티이엠씨', '레이크머티리얼즈', '원익머티리얼즈', '제이아이테크']
+
+
 for n in range(1,41,10) : 
     response = requests.get('https://search.naver.com/search.naver?where=news&sm=tab_opt&sort=1&pd=7&ds=&query='+"하이닉스"+'&start='+str(n))
     soup = bs(response.text, 'html.parser')
