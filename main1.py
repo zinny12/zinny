@@ -14,7 +14,7 @@ bot = telegram.Bot(chat_token)
 Materials = ['SK머티리얼즈', '한솔케미칼', '솔브레인', '동진쎄미켐', '이엔에프테크놀로지', '덕산테코피아', '백광산업', '경인양행', '디엔에프', '오션브릿지', '와이씨켐', '지오엘리먼트', '엘티씨', '코미코', '후성', '티이엠씨', '레이크머티리얼즈', '원익머티리얼즈', '제이아이테크']
 summary = "[Materials]" + "\n"
 for company in Materials:
-summary = "▶" + company + "\n" 
+    summary = "▶" + company + "\n" 
     for n in range(1,41,10) : 
         response = requests.get('https://search.naver.com/search.naver?where=news&sm=tab_opt&sort=0&pd=4&ds=&query='+company+'&start='+str(n))
         soup = bs(response.text, 'html.parser')
