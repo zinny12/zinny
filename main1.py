@@ -27,8 +27,8 @@ for company in Materials:
             text1 = '\"<a href=\''+ link + '\'>'+ title + '</a>\"' "\n"
             summary = summary + text1            
 #response = requests.post('https://api.telegram.org/bot5638730978:AAErxfMUsSu37fKHFHWMmpmbuig94t1qWQo/sendmessage?chat_id=5711468830&text='+summary)
-bot.send_message(chat_id = "5711468830", text = summary, parse_mode = ParseMode.HTML)
-#bot.send_message(chat_id = update.message.chat_id, text = "<a href='https://www.google.com/'>Google</a>", parse_mode = ParseMode.HTML)
+bot.send_message(chat_id = "5711468830", text = summary, parse_mode = 'Markdown')
+#bot.send_message(chat_id = update.message.chat_id, text = "<a href='https://www.google.com/'>Google</a>", parse_mode = 'Markdown')
 
 '''
 num = 0
