@@ -4,7 +4,8 @@ import pprint
 import sys
 import telegram
 import asyncio
-from telegram.constants import ParseMode
+#from telegram.constants import ParseMode
+from telegram.ext import ParseMode
 
 
 chat_token = "5638730978:AAErxfMUsSu37fKHFHWMmpmbuig94t1qWQo"
