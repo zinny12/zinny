@@ -13,8 +13,6 @@ Jinny_id = "5711468830"
 token = "5638730978:AAErxfMUsSu37fKHFHWMmpmbuig94t1qWQo"  
 bot = telegram.Bot(chat_token) 
 
-async def main():
-    await bot.send_message(chat_id = "5711468830", text = value_chain, disable_web_page_preview= True, parse_mode = 'Markdown')
 
 
 Materials = ['SK머티리얼즈', '한솔케미칼', '솔브레인', '동진쎄미켐', '이엔에프테크놀로지', '덕산테코피아', '백광산업', '경인양행', '디엔에프', '오션브릿지', '와이씨켐', '지오엘리먼트', '엘티씨', '코미코', '후성', '티이엠씨', '레이크머티리얼즈', '원익머티리얼즈', '제이아이테크']
@@ -41,11 +39,9 @@ for company in Materials:
     else:
         pass
     
-asyncio.run(main())
+await bot.send_message(chat_id = "5711468830", text = value_chain, disable_web_page_preview= True, parse_mode = 'Markdown')
 
-#await bot.send_message(chat_id = "5711468830", text = value_chain, disable_web_page_preview= True, parse_mode = 'Markdown')
-
-
+'''
 Parts = ['티씨케이', '하나머티리얼즈', '윌덱스', '비씨엔씨', '케이엔제이', '에스앤에스텍', '에프에스티', '아스플로', '한솔아이원스', '뉴파워프라즈마', '원익QnC', '메카로', '미코']
 
 value_chain = "[Parts]" + "\n"
@@ -157,4 +153,4 @@ for company in TestParts:
 
 asyncio.run(main())
 #await bot.send_message(chat_id = "5711468830", text = value_chain, disable_web_page_preview= True, parse_mode = 'Markdown')
-
+'''
