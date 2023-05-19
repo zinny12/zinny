@@ -36,8 +36,7 @@ for company in Materials:
     else:
         pass
 
-#await bot.send_message(chat_id = "5711468830", text = value_chain, disable_web_page_preview= True, parse_mode = 'Markdown')
-bot.send_message(chat_id = "5711468830", text = value_chain, disable_web_page_preview= True, parse_mode = 'Markdown')
+await bot.send_message(chat_id = "5711468830", text = value_chain, disable_web_page_preview= True, parse_mode = 'Markdown')
 
 
 Parts = ['티씨케이', '하나머티리얼즈', '윌덱스', '비씨엔씨', '케이엔제이', '에스앤에스텍', '에프에스티', '아스플로', '한솔아이원스', '뉴파워프라즈마', '원익QnC', '메카로', '미코']
@@ -64,8 +63,8 @@ for company in Parts:
     else:
         pass
 
-#await bot.send_message(chat_id = "5711468830", text = value_chain, disable_web_page_preview= True, parse_mode = 'Markdown')
-bot.send_message(chat_id = "5711468830", text = value_chain, disable_web_page_preview= True, parse_mode = 'Markdown')
+await bot.send_message(chat_id = "5711468830", text = value_chain, disable_web_page_preview= True, parse_mode = 'Markdown')
+
 
 Equipment = ['원익IPS', '유진테크', '주성엔지니어링', '테스', 'HPSP', '파크시스템스', '넥스틴', '오로스테크놀로지', '케이씨텍', '피에스케이', '에이피티씨', '와이아이케이', '엘오티베큠', '싸이맥스', '제우스', '디바이스이엔지', '저스템', '원익홀딩스', '케이씨텍', '에스티아이', '씨앤지하이테크', 'GST', '유니셈', '지앤비에스엔지니어링']
 
@@ -118,8 +117,8 @@ for company in OSAT:
     else:
         pass
 
-#await bot.send_message(chat_id = "5711468830", text = value_chain, disable_web_page_preview= True, parse_mode = 'Markdown')
-bot.send_message(chat_id = "5711468830", text = value_chain, disable_web_page_preview= True, parse_mode = 'Markdown')
+await bot.send_message(chat_id = "5711468830", text = value_chain, disable_web_page_preview= True, parse_mode = 'Markdown')
+
 
 
 TestParts = ['리노공업', 'ISC', '오킨스전자', '티에스이', '샘씨엔에스', '타이거일렉', '한미반도체', '이오테크닉스', '프로텍', '유니테스트', '피에스케이홀딩스', '코세스', '네오셈', '디아이', '엑시콘', '테크윙', '인텍플러스', '신성이엔지', '한양이엔지', '원방테크', '에스엠코어']
@@ -146,6 +145,5 @@ for company in TestParts:
     else:
         pass
 
-#await bot.send_message(chat_id = "5711468830", text = value_chain, disable_web_page_preview= True, parse_mode = 'Markdown')
-bot.send_message(chat_id = "5711468830", text = value_chain, disable_web_page_preview= True, parse_mode = 'Markdown')
+await bot.send_message(chat_id = "5711468830", text = value_chain, disable_web_page_preview= True, parse_mode = 'Markdown')
 
