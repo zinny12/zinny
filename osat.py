@@ -3,34 +3,45 @@ from bs4 import BeautifulSoup as bs
 import pprint
 import sys
 import telegram
+import asyncio
+from telegram.constants import ParseMode
 
-num = 0
+
 
 chat_token = "5638730978:AAErxfMUsSu37fKHFHWMmpmbuig94t1qWQo"
 Jinny_id = "5711468830"
 token = "5638730978:AAErxfMUsSu37fKHFHWMmpmbuig94t1qWQo"  
 bot = telegram.Bot(chat_token) 
 
+def please(): 
+    bot.send_message(chat_id = "5711468830", text = value_chain, disable_web_page_preview= True, parse_mode = 'Markdown')
+
+
 OSAT = ['SFA반도체', '하나마이크론', '네패스', '엘비세미콘', '한양디지텍', '아이텍', '시그네틱스', '윈팩', '두산테스나', '네패스아크', '에이팩트', '큐알티', '심텍', '아비코전자', '해성디에스', '엠케이전자', '덕산하이메탈']
 summary = "[OSAT]" + "\n"
-numberofnews = 0
- 
+
+value_chain = "[OSAT]" + "\n"
+
 for company in OSAT:
-    summary = "▶" + company + "\n" 
+    summary = ""
     for n in range(1,41,10) : 
         response = requests.get('https://search.naver.com/search.naver?where=news&sm=tab_opt&sort=0&pd=4&ds=&query='+company+'&start='+str(n))
         soup = bs(response.text, 'html.parser')
         container = soup.select('ul.list_news > li')
         for i in container:
-            num = num + 1
             title = i.select_one('div.news_area > a').text.strip()
             link = i.select_one('a.news_tit').get('href')
-            #text1 = title + "\n" + link + "\n" + "\n"
-            #text1 = '\"<a href=\''+ link + '\'>'+ title + '</a>\"' "\n"
+            title = title.replace('[', '')
+            title = title.replace(']', ' - ')
+            text1 = '[' + title + '](' + link + ')' + "\n" + "\n"
             summary = summary + text1
-response = requests.post('https://api.telegram.org/bot5638730978:AAErxfMUsSu37fKHFHWMmpmbuig94t1qWQo/sendmessage?chat_id=5711468830&text='+summary)
-#bot.send_message(chat_id = "5711468830", text = summary, parse_mode = 'Markdown')
-#bot.send_message(chat_id = update.message.chat_id, text = "<a href='https://www.google.com/'>Google</a>", parse_mode = 'Markdown')
+    
+    companyname = "▶" + company + "\n" 
+    if summary !="":
+        value_chain = value_chain + companyname + summary
+    else:
+        pass
+
 
 '''
 
