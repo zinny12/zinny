@@ -1,4 +1,36 @@
-name: 'semiconductor_news_manual'
+# This workflow will install Python dependencies, run tests and lint with a single version of Python
+# For more information see: https://help.github.com/actions/language-and-framework-guides/using-python-with-github-actions
+
+name: 'semiconductor_news'
+
+on:
+  schedule:
+    - cron: "0 6 * * *"
+
+jobs:
+  run:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Set up Python 3.10
+      uses: actions/setup-python@v3
+      with:
+        python-version: "3.10"
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install requests
+        pip install bs4
+        pip uninstall python-telegram-bot
+        pip install python-telegram-bot==13.14
+        pip install asyncio
+        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+    - name: run
+      run: |
+
+"name: 'semiconductor_news_manual'
 
 on: workflow_dispatch
 
@@ -27,4 +59,4 @@ jobs:
         python parts.py
         python equipment.py
         python osat.py
-        python testparts.py
+        python testparts.py"
