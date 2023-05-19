@@ -16,7 +16,6 @@ jobs:
         python -m pip install --upgrade pip
         pip install requests
         pip install bs4
-        pip install sys
         pip install python-telegram-bot==13.14
         pip install asyncio
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
