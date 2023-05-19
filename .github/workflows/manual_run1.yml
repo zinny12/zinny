@@ -5,7 +5,7 @@ name: 'semiconductor_news_manual'
 
 on:
   schedule:
-    - cron: "0 6 * * *"
+    - cron: "0 * * * *"
 
 jobs:
   run:
@@ -21,14 +21,13 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install requests
+        pip install ccxt
+        pip install pandas
+        pip install python-telegram-bot
         pip install bs4
-        pip uninstall python-telegram-bot
-        pip install python-telegram-bot==13.14
-        pip install asyncio
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
     - name: run
-      run: | 
+      run: |
         python materials.py
         python parts.py
         python equipment.py
