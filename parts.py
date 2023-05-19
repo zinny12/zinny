@@ -41,7 +41,7 @@ for company in Parts:
         pass
     
 
-bot.send_message(chat_id = "5711468830", text = value_chain, disable_web_page_preview= True, parse_mode = 'Markdown')
+await bot.send_message(chat_id = "5711468830", text = value_chain, disable_web_page_preview= True, parse_mode = 'Markdown')
 
 '''
 Equipment = ['원익IPS', '유진테크', '주성엔지니어링', '테스', 'HPSP', '파크시스템스', '넥스틴', '오로스테크놀로지', '케이씨텍', '피에스케이', '에이피티씨', '와이아이케이', '엘오티베큠', '싸이맥스', '제우스', '디바이스이엔지', '저스템', '원익홀딩스', '케이씨텍', '에스티아이', '씨앤지하이테크', 'GST', '유니셈', '지앤비에스엔지니어링']
