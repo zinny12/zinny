@@ -41,7 +41,7 @@ for company in Equipment:
         pass
 
 
-bot.send_message(chat_id = "5711468830", text = value_chain, disable_web_page_preview= True, parse_mode = 'Markdown')
+await bot.send_message(chat_id = "5711468830", text = value_chain, disable_web_page_preview= True, parse_mode = 'Markdown')
 
 '''
 OSAT = ['SFA반도체', '하나마이크론', '네패스', '엘비세미콘', '한양디지텍', '아이텍', '시그네틱스', '윈팩', '두산테스나', '네패스아크', '에이팩트', '큐알티', '심텍', '아비코전자', '해성디에스', '엠케이전자', '덕산하이메탈']
