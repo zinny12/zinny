@@ -38,7 +38,7 @@ for company in Materials:
     else:
         pass
     
-bot.send_message(chat_id = "5711468830", text = value_chain, disable_web_page_preview= True, parse_mode = 'Markdown')
+await bot.send_message(chat_id = "5711468830", text = value_chain, disable_web_page_preview= True, parse_mode = 'Markdown')
 
 '''
 Parts = ['티씨케이', '하나머티리얼즈', '윌덱스', '비씨엔씨', '케이엔제이', '에스앤에스텍', '에프에스티', '아스플로', '한솔아이원스', '뉴파워프라즈마', '원익QnC', '메카로', '미코']
