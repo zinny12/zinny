@@ -5,7 +5,7 @@ name: 'semiconductor_news_manual'
 
 on:
   schedule:
-    - cron: "0 6 * * *"
+    - cron: "0 * * * *"
 
 jobs:
   run:
