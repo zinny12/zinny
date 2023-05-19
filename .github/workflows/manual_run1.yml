@@ -1,4 +1,4 @@
-name: 'manual_run'
+name: 'semiconductor_news_manual'
 
 on: workflow_dispatch
 
