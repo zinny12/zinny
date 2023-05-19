@@ -41,7 +41,7 @@ for company in Materials:
     
 bot.send_message(chat_id = "5711468830", text = value_chain, disable_web_page_preview= True, parse_mode = 'Markdown')
 
-'''
+
 Parts = ['티씨케이', '하나머티리얼즈', '윌덱스', '비씨엔씨', '케이엔제이', '에스앤에스텍', '에프에스티', '아스플로', '한솔아이원스', '뉴파워프라즈마', '원익QnC', '메카로', '미코']
 
 value_chain = "[Parts]" + "\n"
@@ -66,8 +66,7 @@ for company in Parts:
     else:
         pass
     
-asyncio.run(main())
-#await bot.send_message(chat_id = "5711468830", text = value_chain, disable_web_page_preview= True, parse_mode = 'Markdown')
+bot.send_message(chat_id = "5711468830", text = value_chain, disable_web_page_preview= True, parse_mode = 'Markdown')
 
 
 Equipment = ['원익IPS', '유진테크', '주성엔지니어링', '테스', 'HPSP', '파크시스템스', '넥스틴', '오로스테크놀로지', '케이씨텍', '피에스케이', '에이피티씨', '와이아이케이', '엘오티베큠', '싸이맥스', '제우스', '디바이스이엔지', '저스템', '원익홀딩스', '케이씨텍', '에스티아이', '씨앤지하이테크', 'GST', '유니셈', '지앤비에스엔지니어링']
@@ -94,8 +93,7 @@ for company in Equipment:
     else:
         pass
 
-asyncio.run(main())
-#await bot.send_message(chat_id = "5711468830", text = value_chain, disable_web_page_preview= True, parse_mode = 'Markdown')
+bot.send_message(chat_id = "5711468830", text = value_chain, disable_web_page_preview= True, parse_mode = 'Markdown')
 
 
 OSAT = ['SFA반도체', '하나마이크론', '네패스', '엘비세미콘', '한양디지텍', '아이텍', '시그네틱스', '윈팩', '두산테스나', '네패스아크', '에이팩트', '큐알티', '심텍', '아비코전자', '해성디에스', '엠케이전자', '덕산하이메탈']
@@ -122,8 +120,7 @@ for company in OSAT:
     else:
         pass
 
-asyncio.run(main())
-#await bot.send_message(chat_id = "5711468830", text = value_chain, disable_web_page_preview= True, parse_mode = 'Markdown')
+bot.send_message(chat_id = "5711468830", text = value_chain, disable_web_page_preview= True, parse_mode = 'Markdown')
 
 
 
@@ -150,7 +147,5 @@ for company in TestParts:
         value_chain = value_chain + companyname + summary
     else:
         pass
+bot.send_message(chat_id = "5711468830", text = value_chain, disable_web_page_preview= True, parse_mode = 'Markdown')
 
-asyncio.run(main())
-#await bot.send_message(chat_id = "5711468830", text = value_chain, disable_web_page_preview= True, parse_mode = 'Markdown')
-'''
