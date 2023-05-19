@@ -3,45 +3,35 @@ from bs4 import BeautifulSoup as bs
 import pprint
 import sys
 import telegram
-import asyncio
-from telegram.constants import ParseMode
 
-
+num = 0
 
 chat_token = "5638730978:AAErxfMUsSu37fKHFHWMmpmbuig94t1qWQo"
 Jinny_id = "5711468830"
 token = "5638730978:AAErxfMUsSu37fKHFHWMmpmbuig94t1qWQo"  
 bot = telegram.Bot(chat_token) 
 
-
-
-
 Parts = ['티씨케이', '하나머티리얼즈', '윌덱스', '비씨엔씨', '케이엔제이', '에스앤에스텍', '에프에스티', '아스플로', '한솔아이원스', '뉴파워프라즈마', '원익QnC', '메카로', '미코']
 
-value_chain = "[Parts]" + "\n"
-
+summary = "[Parts]" + "\n"
+numberofnews = 0
+ 
 for company in Parts:
-    summary = ""
+    summary = "▶" + company + "\n" 
     for n in range(1,41,10) : 
         response = requests.get('https://search.naver.com/search.naver?where=news&sm=tab_opt&sort=0&pd=4&ds=&query='+company+'&start='+str(n))
         soup = bs(response.text, 'html.parser')
         container = soup.select('ul.list_news > li')
         for i in container:
+            num = num + 1
             title = i.select_one('div.news_area > a').text.strip()
             link = i.select_one('a.news_tit').get('href')
-            title = title.replace('[', '')
-            title = title.replace(']', ' - ')
-            text1 = '[' + title + '](' + link + ')' + "\n" + "\n"
+            #text1 = title + "\n" + link + "\n" + "\n"
+            #text1 = '\"<a href=\''+ link + '\'>'+ title + '</a>\"' "\n"
             summary = summary + text1
-    
-    companyname = "▶" + company + "\n" 
-    if summary !="":
-        value_chain = value_chain + companyname + summary
-    else:
-        pass
-    
-
-await bot.send_message(chat_id = "5711468830", text = value_chain, disable_web_page_preview= True, parse_mode = 'Markdown')
+response = requests.post('https://api.telegram.org/bot5638730978:AAErxfMUsSu37fKHFHWMmpmbuig94t1qWQo/sendmessage?chat_id=5711468830&text='+summary)
+#bot.send_message(chat_id = "5711468830", text = summary, parse_mode = 'Markdown')
+#bot.send_message(chat_id = update.message.chat_id, text = "<a href='https://www.google.com/'>Google</a>", parse_mode = 'Markdown')
 
 '''
 Equipment = ['원익IPS', '유진테크', '주성엔지니어링', '테스', 'HPSP', '파크시스템스', '넥스틴', '오로스테크놀로지', '케이씨텍', '피에스케이', '에이피티씨', '와이아이케이', '엘오티베큠', '싸이맥스', '제우스', '디바이스이엔지', '저스템', '원익홀딩스', '케이씨텍', '에스티아이', '씨앤지하이테크', 'GST', '유니셈', '지앤비에스엔지니어링']
