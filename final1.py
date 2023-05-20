@@ -152,12 +152,9 @@ for company in TestParts:
 
 test_parts_value_chain = value_chain
 
-async def sendtelegram(materials, equipments, parts, OSAT, tests):
-    await bot.send_message(chat_id = "5711468830", text = materials, disable_web_page_preview= True, parse_mode = 'Markdown')
-    await bot.send_message(chat_id = "5711468830", text = equipments, disable_web_page_preview= True, parse_mode = 'Markdown')
-    await bot.send_message(chat_id = "5711468830", text = parts, disable_web_page_preview= True, parse_mode = 'Markdown')
-    await bot.send_message(chat_id = "5711468830", text = OSAT, disable_web_page_preview= True, parse_mode = 'Markdown')
-    await bot.send_message(chat_id = "5711468830", text = tests, disable_web_page_preview= True, parse_mode = 'Markdown')
+combined = materials_value_chain + "\n" + equipments_value_chain + "\n" +  parts_value_chain + "\n" + OSAT_value_chain + "\n" + test_parts_value_chain
 
+async def sendtelegram(message):
+    await bot.send_message(chat_id = "5711468830", text = message, disable_web_page_preview= True, parse_mode = 'Markdown')
 
-asyncio.run(sendtelegram(materials_value_chain, equipments_value_chain, parts_value_chain, OSAT_value_chain, test_parts_value_chain))
+asyncio.run(sendtelegram(combined))
