@@ -51,12 +51,14 @@ for company in Parts:
         container = soup.select('ul.list_news > li')
         for i in container:
             title = i.select_one('div.news_area > a').text.strip()
-            link = i.select_one('a.news_tit').get('href')
-            title = title.replace('[', '')
-            title = title.replace(']', ' - ')
-            text1 = '[' + title + '](' + link + ')' + "\n" + "\n"
-            summary = summary + text1
-    
+            if company in title:
+                link = i.select_one('a.news_tit').get('href')
+                title = title.replace('[', '')
+                title = title.replace(']', ' - ')
+                text1 = '[' + title + '](' + link + ')' + "\n" + "\n"
+                summary = summary + text1
+            else:
+                pass
     companyname = "▶" + company + "\n" 
     if summary !="":
         value_chain = value_chain + companyname + summary
@@ -77,12 +79,14 @@ for company in Equipments:
         container = soup.select('ul.list_news > li')
         for i in container:
             title = i.select_one('div.news_area > a').text.strip()
-            link = i.select_one('a.news_tit').get('href')
-            title = title.replace('[', '')
-            title = title.replace(']', ' - ')
-            text1 = '[' + title + '](' + link + ')' + "\n" + "\n"
-            summary = summary + text1
-    
+            if company in title:
+                link = i.select_one('a.news_tit').get('href')
+                title = title.replace('[', '')
+                title = title.replace(']', ' - ')
+                text1 = '[' + title + '](' + link + ')' + "\n" + "\n"
+                summary = summary + text1
+            else:
+                pass
     companyname = "▶" + company + "\n" 
     if summary !="":
         value_chain = value_chain + companyname + summary
@@ -103,12 +107,14 @@ for company in OSAT:
         container = soup.select('ul.list_news > li')
         for i in container:
             title = i.select_one('div.news_area > a').text.strip()
-            link = i.select_one('a.news_tit').get('href')
-            title = title.replace('[', '')
-            title = title.replace(']', ' - ')
-            text1 = '[' + title + '](' + link + ')' + "\n" + "\n"
-            summary = summary + text1
-    
+            if company in title:
+                link = i.select_one('a.news_tit').get('href')
+                title = title.replace('[', '')
+                title = title.replace(']', ' - ')
+                text1 = '[' + title + '](' + link + ')' + "\n" + "\n"
+                summary = summary + text1
+            else:
+                pass
     companyname = "▶" + company + "\n" 
     if summary !="":
         value_chain = value_chain + companyname + summary
@@ -130,12 +136,14 @@ for company in TestParts:
         container = soup.select('ul.list_news > li')
         for i in container:
             title = i.select_one('div.news_area > a').text.strip()
-            link = i.select_one('a.news_tit').get('href')
-            title = title.replace('[', '')
-            title = title.replace(']', ' - ')
-            text1 = '[' + title + '](' + link + ')' + "\n" + "\n"
-            summary = summary + text1
-    
+            if company in title:
+                link = i.select_one('a.news_tit').get('href')
+                title = title.replace('[', '')
+                title = title.replace(']', ' - ')
+                text1 = '[' + title + '](' + link + ')' + "\n" + "\n"
+                summary = summary + text1
+            else:
+                pass
     companyname = "▶" + company + "\n" 
     if summary !="":
         value_chain = value_chain + companyname + summary
