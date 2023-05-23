@@ -12,7 +12,7 @@ bot = telegram.Bot(token = chat_token)
 
 num = 0
 for n in range(1,41,10) : 
-    response = requests.get('https://search.naver.com/search.naver?where=news&sm=tab_opt&sort=1&pd=4&ds=&query='+"하이닉스"+'&start='+str(n))
+    response = requests.get('https://search.naver.com/search.naver?where=news&sm=tab_opt&sort=0&pd=4&ds=&query='+"하이닉스"+'&start='+str(n))
     soup = bs(response.text, 'html.parser')
     container = soup.select('ul.list_news > li')
     for i in container:
@@ -28,7 +28,7 @@ for n in range(1,41,10) :
 '''
 num = 0
 for n in range(1,41,10) : 
-    response = requests.get('https://search.naver.com/search.naver?where=news&sm=tab_opt&sort=1&pd=4&ds=&query='+"삼성전자"+'&start='+str(n))
+    response = requests.get('https://search.naver.com/search.naver?where=news&sm=tab_opt&sort=0&pd=4&ds=&query='+"삼성전자"+'&start='+str(n))
     soup = bs(response.text, 'html.parser')
     container = soup.select('ul.list_news > li')
     for i in container:
@@ -42,7 +42,7 @@ for n in range(1,41,10) :
         
 num = 0
 for n in range(1,41,10) : 
-    response = requests.get('https://search.naver.com/search.naver?where=news&sm=tab_opt&sort=1&pd=4&ds=&query='+"반도체"+'&start='+str(n))
+    response = requests.get('https://search.naver.com/search.naver?where=news&sm=tab_opt&sort=0&pd=4&ds=&query='+"반도체"+'&start='+str(n))
     soup = bs(response.text, 'html.parser')
     container = soup.select('ul.list_news > li')
     for i in container:
@@ -56,7 +56,7 @@ for n in range(1,41,10) :
 
 num = 0
 for n in range(1,41,10) : 
-    response = requests.get('https://search.naver.com/search.naver?where=news&sm=tab_opt&sort=1&pd=4&ds=&query='+"DRAM"+'&start='+str(n))
+    response = requests.get('https://search.naver.com/search.naver?where=news&sm=tab_opt&sort=0&pd=4&ds=&query='+"DRAM"+'&start='+str(n))
     soup = bs(response.text, 'html.parser')
     container = soup.select('ul.list_news > li')
     for i in container:
@@ -70,7 +70,7 @@ for n in range(1,41,10) :
         
 num = 0
 for n in range(1,41,10) : 
-    response = requests.get('https://search.naver.com/search.naver?where=news&sm=tab_opt&sort=1&pd=4&ds=&query='+"NAND"+'&start='+str(n))
+    response = requests.get('https://search.naver.com/search.naver?where=news&sm=tab_opt&sort=0&pd=4&ds=&query='+"NAND"+'&start='+str(n))
     soup = bs(response.text, 'html.parser')
     container = soup.select('ul.list_news > li')
     for i in container:
@@ -84,7 +84,7 @@ for n in range(1,41,10) :
         
 num = 0
 for n in range(1,41,10) :  
-    response = requests.get('https://search.naver.com/search.naver?where=news&sm=tab_opt&sort=1&pd=4&ds=&query='+"메모리"+'&start='+str(n))
+    response = requests.get('https://search.naver.com/search.naver?where=news&sm=tab_opt&sort=0&pd=4&ds=&query='+"메모리"+'&start='+str(n))
     soup = bs(response.text, 'html.parser')
     container = soup.select('ul.list_news > li')
     for i in container:
