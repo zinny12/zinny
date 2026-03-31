@@ -1,0 +1,204 @@
+import requests
+from bs4 import BeautifulSoup as bs
+import time
+import asyncio
+import telegram
+
+# ── 텔레그램 설정 ──
+CHAT_TOKEN = "5638730978:AAErxfMUsSu37fKHFHWMmpmbuig94t1qWQo"
+CHAT_ID = "5711468830"
+bot = telegram.Bot(CHAT_TOKEN)
+
+# ── 검색 설정 ──
+PAGES = range(1, 41, 10)  # 1~40페이지, 10단위 (페이지당 10건 × 4 = 최대 40건/키워드)
+DELAY = 0.3  # 네이버 요청 간 딜레이 (초)
+
+# ══════════════════════════════════════════
+# 1) 산업 키워드 (제목 필터 없이 전체 수집)
+# ══════════════════════════════════════════
+INDUSTRY_KEYWORDS = [
+    "하이닉스", "삼성전자", "반도체", "DRAM", "NAND", "메모리",
+    "HBM", "AI반도체", "파운드리",  # 필요시 추가
+]
+
+# ══════════════════════════════════════════
+# 2) 밸류체인 종목 (제목에 종목명 포함된 것만 수집)
+# ══════════════════════════════════════════
+VALUE_CHAIN = {
+    "Materials": [
+        "SK머티리얼즈", "한솔케미칼", "솔브레인", "동진쎄미켐", "포토레지스트",
+        "이엔에프테크놀로지", "덕산테코피아", "백광산업", "경인양행", "디엔에프",
+        "오션브릿지", "와이씨켐", "지오엘리먼트", "엘티씨", "코미코",
+        "후성", "티이엠씨", "레이크머티리얼즈", "원익머티리얼즈", "제이아이테크",
+    ],
+    "Parts": [
+        "티씨케이", "하나머티리얼즈", "윌덱스", "비씨엔씨", "케이엔제이",
+        "에스앤에스텍", "펠리클", "에프에스티", "아스플로", "한솔아이원스",
+        "뉴파워프라즈마", "원익QnC", "메카로", "미코",
+    ],
+    "Equipment": [
+        "원익IPS", "유진테크", "주성엔지니어링", "테스", "HPSP",
+        "파크시스템스", "넥스틴", "오로스테크놀로지", "케이씨텍", "피에스케이",
+        "에이피티씨", "와이아이케이", "엘오티베큠", "싸이맥스", "제우스",
+        "디바이스이엔지", "저스템", "원익홀딩스", "에스티아이", "씨앤지하이테크",
+        "GST", "유니셈", "지앤비에스엔지니어링",
+    ],
+    "OSAT": [
+        "SFA반도체", "하나마이크론", "네패스", "엘비세미콘", "한양디지텍",
+        "아이텍", "시그네틱스", "윈팩", "두산테스나", "네패스아크",
+        "에이팩트", "큐알티",
+    ],
+    "Packaging Materials": [
+        "심텍", "아비코전자", "DDR5", "해성디에스", "엠케이전자", "덕산하이메탈",
+    ],
+    "Test & Inspection": [
+        "리노공업", "ISC", "오킨스전자", "티에스이", "샘씨엔에스",
+        "타이거일렉", "한미반도체", "이오테크닉스", "프로텍", "유니테스트",
+        "피에스케이홀딩스", "코세스", "네오셈", "디아이", "엑시콘",
+        "테크윙", "인텍플러스", "신성이엔지", "한양이엔지", "원방테크", "에스엠코어",
+    ],
+    "Distribution": [
+        "미래반도체", "서플러스글로벌",
+    ],
+}
+
+
+# ══════════════════════════════════════════
+# 크롤링 함수
+# ══════════════════════════════════════════
+def fetch_news(query, filter_title=False):
+    """
+    네이버 뉴스 검색 결과 크롤링.
+    filter_title=True이면 제목에 query가 포함된 기사만 수집.
+    """
+    articles = []
+    for n in PAGES:
+        url = (
+            "https://search.naver.com/search.naver"
+            f"?where=news&sm=tab_opt&sort=0&pd=4&query={query}&start={n}"
+        )
+        try:
+            resp = requests.get(url, timeout=10)
+            soup = bs(resp.text, "html.parser")
+            items = soup.select("ul.list_news > li")
+
+            for item in items:
+                title_tag = item.select_one("div.news_area > a")
+                link_tag = item.select_one("a.news_tit")
+                if not title_tag or not link_tag:
+                    continue
+
+                title = title_tag.text.strip()
+                link = link_tag.get("href")
+
+                # 밸류체인 종목은 제목에 종목명 포함된 것만
+                if filter_title and query not in title:
+                    continue
+
+                # 마크다운 깨짐 방지
+                clean_title = title.replace("[", "").replace("]", " - ")
+                articles.append(f"[{clean_title}]({link})")
+
+        except Exception as e:
+            print(f"[ERROR] {query} page {n}: {e}")
+
+        time.sleep(DELAY)
+
+    return articles
+
+
+# ══════════════════════════════════════════
+# 메시지 조립
+# ══════════════════════════════════════════
+def build_message():
+    sections = []
+
+    # ── Part 1: 산업 키워드 ──
+    industry_lines = []
+    for kw in INDUSTRY_KEYWORDS:
+        print(f"  크롤링: {kw}")
+        articles = fetch_news(kw, filter_title=False)
+        if articles:
+            industry_lines.append(f"▶ {kw}")
+            industry_lines.extend(articles)
+            industry_lines.append("")  # 빈 줄 구분
+
+    if industry_lines:
+        sections.append("━━━━━━━━━━━━━━━━━━━━")
+        sections.append("📡 *산업 키워드 뉴스*")
+        sections.append("━━━━━━━━━━━━━━━━━━━━")
+        sections.extend(industry_lines)
+
+    # ── Part 2: 밸류체인 종목 ──
+    for category, companies in VALUE_CHAIN.items():
+        cat_lines = []
+        for company in companies:
+            print(f"  크롤링: {company}")
+            articles = fetch_news(company, filter_title=True)
+            if articles:
+                cat_lines.append(f"▶ {company}")
+                cat_lines.extend(articles)
+                cat_lines.append("")
+
+        if cat_lines:
+            sections.append(f"\n[{category}]")
+            sections.extend(cat_lines)
+
+    if not sections:
+        return None
+
+    return "\n".join(sections)
+
+
+# ══════════════════════════════════════════
+# 텔레그램 전송
+# ══════════════════════════════════════════
+async def send_telegram(message):
+    """
+    텔레그램 메시지 전송. 4096자 초과 시 자동 분할.
+    """
+    MAX_LEN = 4096
+    chunks = []
+
+    # 줄 단위로 분할해서 4096자 이내로 묶기
+    current = ""
+    for line in message.split("\n"):
+        if len(current) + len(line) + 1 > MAX_LEN:
+            chunks.append(current)
+            current = line
+        else:
+            current = current + "\n" + line if current else line
+    if current:
+        chunks.append(current)
+
+    for i, chunk in enumerate(chunks, 1):
+        try:
+            await bot.send_message(
+                chat_id=CHAT_ID,
+                text=chunk,
+                disable_web_page_preview=True,
+                parse_mode="Markdown",
+            )
+            print(f"  ✓ 메시지 {i}/{len(chunks)} 전송 완료")
+            if i < len(chunks):
+                await asyncio.sleep(1)  # rate limit 방지
+        except Exception as e:
+            print(f"  ✗ 메시지 {i} 전송 실패: {e}")
+
+
+# ══════════════════════════════════════════
+# 실행
+# ══════════════════════════════════════════
+if __name__ == "__main__":
+    print("=" * 40)
+    print("반도체 뉴스 트래커 시작")
+    print("=" * 40)
+
+    msg = build_message()
+
+    if msg:
+        print(f"\n총 {len(msg):,}자 수집 완료. 텔레그램 전송 중...")
+        asyncio.run(send_telegram(msg))
+        print("완료!")
+    else:
+        print("수집된 뉴스가 없습니다.")
