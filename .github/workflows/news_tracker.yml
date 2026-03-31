@@ -1,12 +1,9 @@
 name: 반도체 뉴스 트래커
 
 on:
-  # 매일 한국시간 오전 7시 자동 실행 (UTC 22:00 = KST 07:00)
   schedule:
-    - cron: '0 22 * * *'
-
-  # GitHub에서 수동 실행 버튼도 활성화
-  workflow_dispatch:
+    - cron: '0 22 * * *'  # 매일 KST 07:00
+  workflow_dispatch:       # 수동 실행 버튼
 
 jobs:
   news-crawl:
@@ -22,7 +19,10 @@ jobs:
           python-version: '3.11'
 
       - name: 패키지 설치
-        run: pip install requests beautifulsoup4
+        run: pip install requests
 
       - name: 뉴스 크롤링 실행
+        env:
+          NAVER_CLIENT_ID: ${{ secrets.NAVER_CLIENT_ID }}
+          NAVER_CLIENT_SECRET: ${{ secrets.NAVER_CLIENT_SECRET }}
         run: python crawling
