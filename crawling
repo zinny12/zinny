@@ -1,28 +1,26 @@
 import requests
 from bs4 import BeautifulSoup as bs
 import time
-import asyncio
-import telegram
+import urllib.parse
 
 # ── 텔레그램 설정 ──
-CHAT_TOKEN = "5638730978:AAErxfMUsSu37fKHFHWMmpmbuig94t1qWQo"
+BOT_TOKEN = "5638730978:AAErxfMUsSu37fKHFHWMmpmbuig94t1qWQo"
 CHAT_ID = "5711468830"
-bot = telegram.Bot(CHAT_TOKEN)
+TELEGRAM_URL = f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage"
 
 # ── 검색 설정 ──
-PAGES = range(1, 41, 10)  # 1~40페이지, 10단위 (페이지당 10건 × 4 = 최대 40건/키워드)
-DELAY = 0.3  # 네이버 요청 간 딜레이 (초)
+PAGES = range(1, 41, 10)
+DELAY = 0.3
 
 # ══════════════════════════════════════════
-# 1) 산업 키워드 (제목 필터 없이 전체 수집)
+# 1) 산업 키워드
 # ══════════════════════════════════════════
 INDUSTRY_KEYWORDS = [
     "하이닉스", "삼성전자", "반도체", "DRAM", "NAND", "메모리",
-    "HBM", "AI반도체", "파운드리",  # 필요시 추가
 ]
 
 # ══════════════════════════════════════════
-# 2) 밸류체인 종목 (제목에 종목명 포함된 것만 수집)
+# 2) 밸류체인 종목
 # ══════════════════════════════════════════
 VALUE_CHAIN = {
     "Materials": [
@@ -64,103 +62,12 @@ VALUE_CHAIN = {
 
 
 # ══════════════════════════════════════════
-# 크롤링 함수
+# 텔레그램 전송 (requests 직접 사용 — 라이브러리 불필요)
 # ══════════════════════════════════════════
-def fetch_news(query, filter_title=False):
-    """
-    네이버 뉴스 검색 결과 크롤링.
-    filter_title=True이면 제목에 query가 포함된 기사만 수집.
-    """
-    articles = []
-    for n in PAGES:
-        url = (
-            "https://search.naver.com/search.naver"
-            f"?where=news&sm=tab_opt&sort=0&pd=4&query={query}&start={n}"
-        )
-        try:
-            resp = requests.get(url, timeout=10)
-            soup = bs(resp.text, "html.parser")
-            items = soup.select("ul.list_news > li")
-
-            for item in items:
-                title_tag = item.select_one("div.news_area > a")
-                link_tag = item.select_one("a.news_tit")
-                if not title_tag or not link_tag:
-                    continue
-
-                title = title_tag.text.strip()
-                link = link_tag.get("href")
-
-                # 밸류체인 종목은 제목에 종목명 포함된 것만
-                if filter_title and query not in title:
-                    continue
-
-                # 마크다운 깨짐 방지
-                clean_title = title.replace("[", "").replace("]", " - ")
-                articles.append(f"[{clean_title}]({link})")
-
-        except Exception as e:
-            print(f"[ERROR] {query} page {n}: {e}")
-
-        time.sleep(DELAY)
-
-    return articles
-
-
-# ══════════════════════════════════════════
-# 메시지 조립
-# ══════════════════════════════════════════
-def build_message():
-    sections = []
-
-    # ── Part 1: 산업 키워드 ──
-    industry_lines = []
-    for kw in INDUSTRY_KEYWORDS:
-        print(f"  크롤링: {kw}")
-        articles = fetch_news(kw, filter_title=False)
-        if articles:
-            industry_lines.append(f"▶ {kw}")
-            industry_lines.extend(articles)
-            industry_lines.append("")  # 빈 줄 구분
-
-    if industry_lines:
-        sections.append("━━━━━━━━━━━━━━━━━━━━")
-        sections.append("📡 *산업 키워드 뉴스*")
-        sections.append("━━━━━━━━━━━━━━━━━━━━")
-        sections.extend(industry_lines)
-
-    # ── Part 2: 밸류체인 종목 ──
-    for category, companies in VALUE_CHAIN.items():
-        cat_lines = []
-        for company in companies:
-            print(f"  크롤링: {company}")
-            articles = fetch_news(company, filter_title=True)
-            if articles:
-                cat_lines.append(f"▶ {company}")
-                cat_lines.extend(articles)
-                cat_lines.append("")
-
-        if cat_lines:
-            sections.append(f"\n[{category}]")
-            sections.extend(cat_lines)
-
-    if not sections:
-        return None
-
-    return "\n".join(sections)
-
-
-# ══════════════════════════════════════════
-# 텔레그램 전송
-# ══════════════════════════════════════════
-async def send_telegram(message):
-    """
-    텔레그램 메시지 전송. 4096자 초과 시 자동 분할.
-    """
+def send_telegram(message):
+    """4096자 초과 시 자동 분할 전송"""
     MAX_LEN = 4096
     chunks = []
-
-    # 줄 단위로 분할해서 4096자 이내로 묶기
     current = ""
     for line in message.split("\n"):
         if len(current) + len(line) + 1 > MAX_LEN:
@@ -173,17 +80,108 @@ async def send_telegram(message):
 
     for i, chunk in enumerate(chunks, 1):
         try:
-            await bot.send_message(
-                chat_id=CHAT_ID,
-                text=chunk,
-                disable_web_page_preview=True,
-                parse_mode="Markdown",
-            )
-            print(f"  ✓ 메시지 {i}/{len(chunks)} 전송 완료")
-            if i < len(chunks):
-                await asyncio.sleep(1)  # rate limit 방지
+            resp = requests.post(TELEGRAM_URL, json={
+                "chat_id": CHAT_ID,
+                "text": chunk,
+                "parse_mode": "Markdown",
+                "disable_web_page_preview": True,
+            }, timeout=10)
+            result = resp.json()
+            if result.get("ok"):
+                print(f"  ✓ 메시지 {i}/{len(chunks)} 전송 완료")
+            else:
+                print(f"  ✗ 메시지 {i} 실패: {result.get('description')}")
+            time.sleep(1)
         except Exception as e:
-            print(f"  ✗ 메시지 {i} 전송 실패: {e}")
+            print(f"  ✗ 메시지 {i} 전송 에러: {e}")
+
+
+# ══════════════════════════════════════════
+# 네이버 뉴스 크롤링
+# ══════════════════════════════════════════
+def fetch_news(query, filter_title=False):
+    articles = []
+    for n in PAGES:
+        url = (
+            "https://search.naver.com/search.naver"
+            f"?where=news&sm=tab_opt&sort=0&pd=4"
+            f"&query={urllib.parse.quote(query)}&start={n}"
+        )
+        try:
+            resp = requests.get(url, timeout=10, headers={
+                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
+            })
+            soup = bs(resp.text, "html.parser")
+            items = soup.select("ul.list_news > li")
+
+            for item in items:
+                title_tag = item.select_one("div.news_area > a")
+                link_tag = item.select_one("a.news_tit")
+                if not title_tag or not link_tag:
+                    continue
+
+                title = title_tag.text.strip()
+                link = link_tag.get("href")
+
+                if filter_title and query not in title:
+                    continue
+
+                clean_title = title.replace("[", "").replace("]", " - ")
+                articles.append(f"[{clean_title}]({link})")
+
+        except Exception as e:
+            print(f"  [ERROR] {query} page {n}: {e}")
+
+        time.sleep(DELAY)
+
+    return articles
+
+
+# ══════════════════════════════════════════
+# 메시지 조립
+# ══════════════════════════════════════════
+def build_message():
+    sections = []
+    total_articles = 0
+
+    # ── Part 1: 산업 키워드 ──
+    industry_lines = []
+    for kw in INDUSTRY_KEYWORDS:
+        articles = fetch_news(kw, filter_title=False)
+        count = len(articles)
+        total_articles += count
+        print(f"  {kw}: {count}건")
+        if articles:
+            industry_lines.append(f"▶ {kw}")
+            industry_lines.extend(articles)
+            industry_lines.append("")
+
+    if industry_lines:
+        sections.append("━━━━━━━━━━━━━━━━━━━━")
+        sections.append("📡 산업 키워드 뉴스")
+        sections.append("━━━━━━━━━━━━━━━━━━━━")
+        sections.extend(industry_lines)
+
+    # ── Part 2: 밸류체인 종목 ──
+    for category, companies in VALUE_CHAIN.items():
+        cat_lines = []
+        for company in companies:
+            articles = fetch_news(company, filter_title=True)
+            count = len(articles)
+            total_articles += count
+            if count > 0:
+                print(f"  {company}: {count}건")
+            if articles:
+                cat_lines.append(f"▶ {company}")
+                cat_lines.extend(articles)
+                cat_lines.append("")
+
+        if cat_lines:
+            sections.append(f"\n⎡{category}⎤")
+            sections.extend(cat_lines)
+
+    print(f"\n총 {total_articles}건 수집")
+    return "\n".join(sections) if sections else None
 
 
 # ══════════════════════════════════════════
@@ -194,11 +192,41 @@ if __name__ == "__main__":
     print("반도체 뉴스 트래커 시작")
     print("=" * 40)
 
+    # 1) 텔레그램 연결 테스트
+    print("\n[1] 텔레그램 연결 테스트...")
+    try:
+        test = requests.get(
+            f"https://api.telegram.org/bot{BOT_TOKEN}/getMe", timeout=10
+        )
+        test_result = test.json()
+        if test_result.get("ok"):
+            bot_name = test_result["result"]["username"]
+            print(f"  ✓ 봇 연결 OK: @{bot_name}")
+        else:
+            print(f"  ✗ 봇 토큰 에러: {test_result.get('description')}")
+            print("  → BOT_TOKEN을 확인하세요")
+            exit(1)
+    except Exception as e:
+        print(f"  ✗ 네트워크 에러: {e}")
+        exit(1)
+
+    # 2) 네이버 크롤링 테스트
+    print("\n[2] 네이버 크롤링 테스트...")
+    test_articles = fetch_news("삼성전자", filter_title=False)
+    if test_articles:
+        print(f"  ✓ 크롤링 OK: 삼성전자 {len(test_articles)}건")
+    else:
+        print("  ✗ 크롤링 0건 — 네이버 셀렉터가 변경되었을 수 있음")
+        print("  → 네이버 뉴스 검색 HTML 구조를 확인하세요")
+        exit(1)
+
+    # 3) 전체 크롤링 + 전송
+    print("\n[3] 전체 크롤링 시작...")
     msg = build_message()
 
     if msg:
-        print(f"\n총 {len(msg):,}자 수집 완료. 텔레그램 전송 중...")
-        asyncio.run(send_telegram(msg))
-        print("완료!")
+        print(f"\n[4] 텔레그램 전송 중... ({len(msg):,}자)")
+        send_telegram(msg)
+        print("\n완료!")
     else:
-        print("수집된 뉴스가 없습니다.")
+        print("\n수집된 뉴스가 없습니다.")
