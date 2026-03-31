@@ -1,16 +1,21 @@
 import requests
-from bs4 import BeautifulSoup as bs
 import time
-import urllib.parse
+import os
 
 # ── 텔레그램 설정 ──
 BOT_TOKEN = "5638730978:AAErxfMUsSu37fKHFHWMmpmbuig94t1qWQo"
 CHAT_ID = "5711468830"
 TELEGRAM_URL = f"https://api.telegram.org/bot{BOT_TOKEN}/sendMessage"
 
+# ── 네이버 API 설정 ──
+# GitHub Actions: Settings → Secrets에 등록하면 env로 자동 주입
+# 로컬 실행: 아래 따옴표 안에 직접 입력
+NAVER_CLIENT_ID = os.environ.get("NAVER_CLIENT_ID", "V659bqCpQ3zj7yCnouN4")
+NAVER_CLIENT_SECRET = os.environ.get("NAVER_CLIENT_SECRET", "GbNd66xYJ2")
+
 # ── 검색 설정 ──
-PAGES = range(1, 41, 10)
-DELAY = 0.3
+DISPLAY = 20  # 키워드당 최대 기사 수 (최대 100)
+DELAY = 0.1
 
 # ══════════════════════════════════════════
 # 1) 산업 키워드
@@ -62,7 +67,58 @@ VALUE_CHAIN = {
 
 
 # ══════════════════════════════════════════
-# 텔레그램 전송 (requests 직접 사용 — 라이브러리 불필요)
+# 네이버 뉴스 API 검색
+# ══════════════════════════════════════════
+def fetch_news(query, filter_title=False, display=DISPLAY):
+    """
+    네이버 오픈 API로 뉴스 검색.
+    https://developers.naver.com/docs/serviceapi/search/news/news.md
+    """
+    url = "https://openapi.naver.com/v1/search/news.json"
+    headers = {
+        "X-Naver-Client-Id": NAVER_CLIENT_ID,
+        "X-Naver-Client-Secret": NAVER_CLIENT_SECRET,
+    }
+    params = {
+        "query": query,
+        "display": display,
+        "sort": "date",  # 최신순
+    }
+
+    articles = []
+    try:
+        resp = requests.get(url, headers=headers, params=params, timeout=10)
+        data = resp.json()
+
+        if "items" not in data:
+            print(f"  [API ERROR] {query}: {data.get('errorMessage', 'unknown')}")
+            return articles
+
+        for item in data["items"]:
+            title = item["title"]
+            # HTML 태그 제거 (<b>, </b> 등)
+            title = title.replace("<b>", "").replace("</b>", "")
+            title = title.replace("&quot;", '"').replace("&amp;", "&")
+            title = title.replace("&lt;", "<").replace("&gt;", ">")
+            link = item["originallink"] or item["link"]
+
+            if filter_title and query not in title:
+                continue
+
+            # 마크다운 깨짐 방지
+            clean_title = title.replace("[", "").replace("]", " - ")
+            clean_title = clean_title.replace("(", "").replace(")", "")
+            articles.append(f"[{clean_title}]({link})")
+
+    except Exception as e:
+        print(f"  [ERROR] {query}: {e}")
+
+    time.sleep(DELAY)
+    return articles
+
+
+# ══════════════════════════════════════════
+# 텔레그램 전송
 # ══════════════════════════════════════════
 def send_telegram(message):
     """4096자 초과 시 자동 분할 전송"""
@@ -94,47 +150,6 @@ def send_telegram(message):
             time.sleep(1)
         except Exception as e:
             print(f"  ✗ 메시지 {i} 전송 에러: {e}")
-
-
-# ══════════════════════════════════════════
-# 네이버 뉴스 크롤링
-# ══════════════════════════════════════════
-def fetch_news(query, filter_title=False):
-    articles = []
-    for n in PAGES:
-        url = (
-            "https://search.naver.com/search.naver"
-            f"?where=news&sm=tab_opt&sort=0&pd=4"
-            f"&query={urllib.parse.quote(query)}&start={n}"
-        )
-        try:
-            resp = requests.get(url, timeout=10, headers={
-                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
-            })
-            soup = bs(resp.text, "html.parser")
-            items = soup.select("ul.list_news > li")
-
-            for item in items:
-                title_tag = item.select_one("div.news_area > a")
-                link_tag = item.select_one("a.news_tit")
-                if not title_tag or not link_tag:
-                    continue
-
-                title = title_tag.text.strip()
-                link = link_tag.get("href")
-
-                if filter_title and query not in title:
-                    continue
-
-                clean_title = title.replace("[", "").replace("]", " - ")
-                articles.append(f"[{clean_title}]({link})")
-
-        except Exception as e:
-            print(f"  [ERROR] {query} page {n}: {e}")
-
-        time.sleep(DELAY)
-
-    return articles
 
 
 # ══════════════════════════════════════════
@@ -192,32 +207,30 @@ if __name__ == "__main__":
     print("반도체 뉴스 트래커 시작")
     print("=" * 40)
 
-    # 1) 텔레그램 연결 테스트
-    print("\n[1] 텔레그램 연결 테스트...")
+    # 1) 네이버 API 연결 테스트
+    print("\n[1] 네이버 API 테스트...")
+    test = fetch_news("삼성전자", filter_title=False, display=3)
+    if test:
+        print(f"  ✓ API OK: 삼성전자 {len(test)}건")
+    else:
+        print("  ✗ API 실패 — Client ID/Secret을 확인하세요")
+        print("  → https://developers.naver.com 에서 발급")
+        exit(1)
+
+    # 2) 텔레그램 연결 테스트
+    print("\n[2] 텔레그램 연결 테스트...")
     try:
-        test = requests.get(
+        tg_test = requests.get(
             f"https://api.telegram.org/bot{BOT_TOKEN}/getMe", timeout=10
         )
-        test_result = test.json()
-        if test_result.get("ok"):
-            bot_name = test_result["result"]["username"]
-            print(f"  ✓ 봇 연결 OK: @{bot_name}")
+        tg_result = tg_test.json()
+        if tg_result.get("ok"):
+            print(f"  ✓ 봇 연결 OK: @{tg_result['result']['username']}")
         else:
-            print(f"  ✗ 봇 토큰 에러: {test_result.get('description')}")
-            print("  → BOT_TOKEN을 확인하세요")
+            print(f"  ✗ 봇 토큰 에러: {tg_result.get('description')}")
             exit(1)
     except Exception as e:
         print(f"  ✗ 네트워크 에러: {e}")
-        exit(1)
-
-    # 2) 네이버 크롤링 테스트
-    print("\n[2] 네이버 크롤링 테스트...")
-    test_articles = fetch_news("삼성전자", filter_title=False)
-    if test_articles:
-        print(f"  ✓ 크롤링 OK: 삼성전자 {len(test_articles)}건")
-    else:
-        print("  ✗ 크롤링 0건 — 네이버 셀렉터가 변경되었을 수 있음")
-        print("  → 네이버 뉴스 검색 HTML 구조를 확인하세요")
         exit(1)
 
     # 3) 전체 크롤링 + 전송
