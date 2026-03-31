@@ -21,6 +21,15 @@ jobs:
       - name: 패키지 설치
         run: pip install requests
 
+      - name: 디버그 - 파일 확인
+        run: |
+          echo "=== 파일 줄 수 ==="
+          wc -l crawling
+          echo "=== 첫 5줄 ==="
+          head -5 crawling
+          echo "=== 마지막 5줄 ==="
+          tail -5 crawling
+
       - name: 뉴스 크롤링 실행
         env:
           NAVER_CLIENT_ID: ${{ secrets.NAVER_CLIENT_ID }}
